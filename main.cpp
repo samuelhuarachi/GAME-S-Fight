@@ -19,6 +19,10 @@
 #include <iterator>
 #include <cmath>
 #include <tuple>
+#include <vector>
+#include "Ship.h"
+#include "Bullet.h"
+
 using namespace std;
 using std::cout;
 using std::cerr;
@@ -28,6 +32,8 @@ using std::ifstream;
 using std::vector;
 #define KEY_SEEN     1
 #define KEY_RELEASED 2
+
+
 
 bool is_pressing_the_key(int key) {
     if (key) {
@@ -44,13 +50,12 @@ int main()
         al_show_native_message_box(NULL,NULL,NULL,"Allegro couldnt initialize",NULL,NULL);
 
     if(!al_install_keyboard())
-    {
         printf("couldn't initialize keyboard\n");
-    }
+
     /*if(!al_install_mouse())
-    {
-        printf("couldn't initialize mouse\n");
-    }*/
+        printf("couldn't initialize mouse\n"); */
+
+
     al_init_primitives_addon();
     al_install_audio();
     al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
@@ -67,9 +72,10 @@ int main()
 
 
     ALLEGRO_EVENT_QUEUE* queue;
+    int FPS = 60;
 
     ALLEGRO_TIMER* timer;
-    timer = al_create_timer(1.0 / 60.0);
+    timer = al_create_timer(1.0 / FPS);
     queue = al_create_event_queue();
     font = al_create_builtin_font();
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -94,17 +100,46 @@ int main()
 
     bool exit_game = false;
     memset(key, 0, sizeof(key));
+
+    double last_time = al_get_time();
+    double delta_time;
+
+    Ship ship(398, 500);
+
+    vector<Bullet> bullets;
+
     while(!exit_game) {
         al_wait_for_event(queue, &event);
         al_clear_to_color(al_map_rgb(0, 0, 0));
 
         switch(event.type)
         {
-            case ALLEGRO_EVENT_TIMER: // Holding key
-                abc = is_pressing_the_key(key[ALLEGRO_KEY_S]);
-                if (abc) {
-                        printf("%d\n", abc);
+            case ALLEGRO_EVENT_TIMER: // Holding some keyboard key
+                delta_time = al_get_time() - last_time;
+                last_time = al_get_time();
+
+
+                ship.update(
+                    is_pressing_the_key(key[ALLEGRO_KEY_A]),
+                    is_pressing_the_key(key[ALLEGRO_KEY_D]),
+                    delta_time
+                );
+
+                for (Bullet& bullet : bullets) {
+                    bullet.update(delta_time);
                 }
+
+                bullets.erase(
+                    remove_if(
+                        bullets.begin(),
+                        bullets.end(),
+                        [](const Bullet& bullet) {
+                            return !bullet.isActive();
+                        }
+                    ),
+                    bullets.end()
+                );
+
 
                 for(int i = 0; i < ALLEGRO_KEY_MAX; i++)
                     key[i] &= KEY_SEEN;
@@ -119,6 +154,11 @@ int main()
                 if(key[ALLEGRO_KEY_ESCAPE]) {
                     exit_game = true;
                 }
+
+                if (key[ALLEGRO_KEY_SPACE]) {
+                    bullets.emplace_back(ship.getX(), ship.getY());
+                }
+
                 key[event.keyboard.keycode] &= KEY_RELEASED;
                 break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -133,11 +173,47 @@ int main()
 
         al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 20, 0, "X: %f", 1.1);
 
+        ship.draw();
+        for (Bullet& bullet : bullets) {
+            bullet.draw();
+        }
+
+        al_draw_line(
+            237, 0,
+            237, 600,
+            al_map_rgb(255, 255, 255),
+            2
+        );
+
+        al_draw_line(
+            307, 0,
+            307, 600,
+            al_map_rgb(255, 255, 255),
+            2
+        );
+
+        al_draw_line(
+            489, 0,
+            489, 600,d
+            al_map_rgb(255, 255, 255),
+            2
+        );
+
+        al_draw_line(
+            559, 0,
+            559, 600,
+            al_map_rgb(255, 255, 255),
+            2
+        );
+
+
+
         al_flip_display();
     }
 
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+
 
     return 0;
 }

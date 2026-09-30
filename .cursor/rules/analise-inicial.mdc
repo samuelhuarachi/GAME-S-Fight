@@ -1,0 +1,48 @@
+---
+alwaysApply: true
+---
+
+
+Analise este projeto de jogo em C++ com Allegro 5. Não altere nenhum arquivo. Entregue só o relatório.
+
+Contexto do repositório:
+- Projeto Code::Blocks: bootstrap_allegro.cbp
+- Allegro 5.0.10 (MinGW), link estático da lib monolith
+- Entrada: main.cpp (janela 800x600, timer a 60 FPS, teclado, fila de eventos)
+- Classes atuais: Ship (include/Ship.h, src/Ship.cpp) e Bullet (include/Bullet.h, src/Bullet.cpp)
+- Asset visível: ovni1.jpg
+- README ainda é um bootstrap mínimo
+
+Leia main.cpp, os headers em include/, os .cpp em src/, bootstrap_allegro.cbp e o README. Cite arquivo e função quando apontar um problema.
+
+Responda nesta ordem:
+
+1. O que o jogo faz hoje
+   - Loop (timer, fila, redraw)
+   - O que o jogador controla
+   - O que Ship e Bullet fazem de fato (update, draw, limites da tela, disparo)
+   - O que está inicializado no Allegro e o que não é usado (áudio, mouse, fontes, primitivas, imagem)
+
+2. Mapa do código
+   - Responsabilidade de cada arquivo
+   - Onde vive o estado do jogo (variáveis em main vs membros das classes)
+   - Como main conversa com Ship e Bullet
+
+3. Riscos e bugs prováveis
+   - Recursos do Allegro criados e não destruídos, ou checagens que não abortam
+   - Input (key seen/released, tecla presa, disparo repetido)
+   - Delta time vs movimento por frame
+   - Colisão, vida do projétil, desenho fora da tela
+   - Includes e using namespace que atrapalham
+   - Projeto .cbp: Ship.cpp e Bullet.cpp entram no build? Caminho da Allegro é absoluto/relativo e frágil?
+
+4. O que falta para um jogo jogável
+   Lista curta, em ordem de dependência (inimigo, tiro do jogador, colisão, pontuação, game over). Para cada item: onde encaixar (main, Ship, Bullet ou classe nova) e o que não fazer ainda.
+
+5. Próximo passo único
+   Uma mudança pequena, concreta, que desbloqueia o resto. Diga o arquivo e o comportamento esperado. Não escreva o patch completo.
+
+Restrições:
+- Não proponha trocar de engine, de IDE ou de padrão (ECS, componentes) nesta análise.
+- Não invente sistemas que o código não tem.
+- Se algo não der para afirmar lendo o código, marque como "não confirmado".
