@@ -20,8 +20,8 @@
 #include <cmath>
 #include <tuple>
 #include <vector>
-#include "Ship.h"
 #include "Bullet.h"
+#include "Fleet.h"
 
 using namespace std;
 using std::cout;
@@ -104,7 +104,7 @@ int main()
     double last_time = al_get_time();
     double delta_time;
 
-    Ship ship(398, 500);
+    Fleet fleet(398, 576);
 
     vector<Bullet> bullets;
 
@@ -118,8 +118,7 @@ int main()
                 delta_time = al_get_time() - last_time;
                 last_time = al_get_time();
 
-
-                ship.update(
+                fleet.update(
                     is_pressing_the_key(key[ALLEGRO_KEY_A]),
                     is_pressing_the_key(key[ALLEGRO_KEY_D]),
                     delta_time
@@ -155,9 +154,8 @@ int main()
                     exit_game = true;
                 }
 
-                if (key[ALLEGRO_KEY_SPACE]) {
-                    bullets.emplace_back(ship.getX(), ship.getY());
-                }
+                if (key[ALLEGRO_KEY_SPACE])
+                    fleet.shoot(bullets);
 
                 key[event.keyboard.keycode] &= KEY_RELEASED;
                 break;
@@ -173,7 +171,8 @@ int main()
 
         al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 20, 0, "X: %f", 1.1);
 
-        ship.draw();
+        fleet.draw();
+
         for (Bullet& bullet : bullets) {
             bullet.draw();
         }
@@ -194,7 +193,7 @@ int main()
 
         al_draw_line(
             489, 0,
-            489, 600,d
+            489, 600,
             al_map_rgb(255, 255, 255),
             2
         );

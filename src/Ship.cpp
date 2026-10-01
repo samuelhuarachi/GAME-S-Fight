@@ -7,37 +7,22 @@ Ship::Ship(double x, double y)
 {
     this->x = x;
     this->y = y;
-    this->speed = 333;
 }
 
-void Ship::update(bool move_left, bool move_right, double delta_time)
+void Ship::setPosition(double new_x, double new_y)
 {
-    if (move_right) {
-        x += speed * delta_time;
-    }
-
-    if (move_left) {
-        x -= speed * delta_time;
-    }
-
-    if (x > 548) {
-        x = 548;
-    }
-
-    if (x < 248) {
-        x = 248;
-    }
+    x = new_x;
+    y = new_y;
 }
 
 void Ship::draw()
 {
-    al_draw_circle(
-        x,
-        y,
-        8,
-        al_map_rgb(255, 0, 0),
-        3
-    );
+    al_draw_circle(x, y, 6, al_map_rgb(255, 0, 0), 2);
+}
+
+Bullet Ship::shoot() const
+{
+    return Bullet(x, y);
 }
 
 double Ship::getX() const

@@ -14,7 +14,8 @@ public:
 private:
     double x;
     double y;
-    double speed;
+    double velocity_x;
+    double velocity_y;
     bool active;
 };
 

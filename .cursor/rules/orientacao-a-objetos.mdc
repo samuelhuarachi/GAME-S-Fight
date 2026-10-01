@@ -1,0 +1,19 @@
+---
+description: Preferir orientação a objetos neste jogo C++
+alwaysApply: true
+---
+
+# Orientação a objetos
+
+Neste projeto, código novo entra em classes. `main` só inicia o Allegro, lê eventos e chama objetos.
+
+- Uma classe por conceito do jogo: nave, frota, tiro, inimigo, item.
+- Header em `include/Nome.h`, implementação em `src/Nome.cpp`.
+- O objeto guarda o próprio estado e oferece `update`, `draw` e ações (`shoot`, `addShip`).
+- Quem usa a classe fala com o objeto (`fleet.shoot(bullets)`), sem espalhar `vector` e contas de posição no `main`.
+- Formação, limite de tela e movimento do grupo ficam na classe dona do grupo.
+- Cada `.cpp` novo também entra como `<Unit>` no `bootstrap_allegro.cbp`.
+
+Mantenha o estilo já usado: classe com membros privados, métodos definidos no `.cpp`, Allegro 5 e C++11. Sem ECS, componentes ou outra engine.
+
+Exemplo: várias naves são um `Fleet` com `std::vector<Ship>`. `Ship` desenha o próprio círculo e cria o próprio `Bullet`. `Fleet` move o centro, posiciona cada nave e dispara por todas.
