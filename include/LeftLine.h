@@ -12,10 +12,14 @@ public:
 
     double getY() const;
     bool hasLeftScreen() const;
+    bool hits(double bullet_x, double bullet_y) const;
+    bool takeHit();
+    bool isDestroyed() const;
 
 private:
     double y;
     double speed;
+    int life;
 };
 
 #endif // LEFTLINE_H

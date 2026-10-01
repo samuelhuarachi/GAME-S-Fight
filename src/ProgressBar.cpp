@@ -15,6 +15,7 @@ static const double INNER_Y2 = 382.0;
 ProgressBar::ProgressBar()
 {
     value = 1;
+    destroyed = 0;
 }
 
 void ProgressBar::setValue(int new_value)
@@ -29,6 +30,23 @@ void ProgressBar::setValue(int new_value)
 int ProgressBar::getValue() const
 {
     return value;
+}
+
+int ProgressBar::addDestructions(int count)
+{
+    int ships = 0;
+    destroyed += count;
+
+    while (destroyed >= 20) {
+        destroyed -= 20;
+        ships += 1;
+    }
+
+    value = destroyed * 5;
+    if (value < 1)
+        value = 1;
+
+    return ships;
 }
 
 void ProgressBar::draw()

@@ -53,6 +53,21 @@ void Bullet::draw()
     );
 }
 
+double Bullet::getX() const
+{
+    return x;
+}
+
+double Bullet::getY() const
+{
+    return y;
+}
+
+void Bullet::deactivate()
+{
+    active = false;
+}
+
 bool Bullet::isActive() const
 {
     return active;

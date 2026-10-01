@@ -8,10 +8,12 @@ public:
 
     void setValue(int new_value);
     int getValue() const;
+    int addDestructions(int count);
     void draw();
 
 private:
     int value;
+    int destroyed;
 };
 
 #endif

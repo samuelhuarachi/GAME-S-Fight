@@ -34,3 +34,38 @@ void LeftSector::draw()
     for (LeftLine& line : lines)
         line.draw();
 }
+
+int LeftSector::collide(std::vector<Bullet>& bullets)
+{
+    int destroyed = 0;
+
+    for (Bullet& bullet : bullets) {
+        if (!bullet.isActive())
+            continue;
+
+        for (LeftLine& line : lines) {
+            if (line.isDestroyed())
+                continue;
+            if (!line.hits(bullet.getX(), bullet.getY()))
+                continue;
+
+            bullet.deactivate();
+            if (line.takeHit())
+                destroyed += 1;
+            break;
+        }
+    }
+
+    lines.erase(
+        std::remove_if(
+            lines.begin(),
+            lines.end(),
+            [](const LeftLine& line) {
+                return line.isDestroyed();
+            }
+        ),
+        lines.end()
+    );
+
+    return destroyed;
+}

@@ -9,6 +9,9 @@ public:
     void update(double delta_time);
     void draw();
 
+    double getX() const;
+    double getY() const;
+    void deactivate();
     bool isActive() const;
 
 private:

@@ -119,6 +119,7 @@ int main()
         switch(event.type)
         {
             case ALLEGRO_EVENT_TIMER: // Holding some keyboard key
+            {
                 delta_time = al_get_time() - last_time;
                 last_time = al_get_time();
 
@@ -134,6 +135,11 @@ int main()
                     bullet.update(delta_time);
                 }
 
+                int destroyed = left_sector.collide(bullets);
+                int ships = progress_bar.addDestructions(destroyed);
+                for (int i = 0; i < ships; ++i)
+                    fleet.addShip();
+
                 bullets.erase(
                     remove_if(
                         bullets.begin(),
@@ -146,10 +152,13 @@ int main()
                 );
 
 
-                for(int i = 0; i < ALLEGRO_KEY_MAX; i++)
+                for(int i = 0; i < ALLEGRO_KEY_MAX; i++) {
                     key[i] &= KEY_SEEN;
+                }
+
 
                 break;
+            }
             case ALLEGRO_EVENT_KEY_DOWN: // Key down
                 key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED;
                 break;
