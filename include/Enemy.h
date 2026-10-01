@@ -9,6 +9,7 @@ public:
     void update(double delta_time);
     void draw();
     void stop();
+    void resume();
     void pauseHurt();
 
     double getX() const;
@@ -16,9 +17,10 @@ public:
     double getRadius() const;
     int getId() const;
     bool hasLeftScreen() const;
-    bool hitsBullet(double bullet_x, double bullet_y) const;
+    bool hitsBullet(double bullet_x, double bullet_y, double bullet_radius) const;
     bool hitsShip(double ship_x, double ship_y) const;
     bool takeHit();
+    void takeDamage(int amount);
     void destroy();
     bool isDestroyed() const;
     bool isTough() const;

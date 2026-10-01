@@ -3,7 +3,6 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-static const double BULLET_RADIUS = 4.0;
 static const double SHIP_RADIUS = 6.0;
 static const double SCREEN_BOTTOM = 600.0;
 static const double HURT_INTERVAL = 1.0;
@@ -51,6 +50,11 @@ void Enemy::stop()
     stopped = true;
 }
 
+void Enemy::resume()
+{
+    stopped = false;
+}
+
 void Enemy::pauseHurt()
 {
     hurt_cooldown = HURT_INTERVAL;
@@ -81,11 +85,11 @@ bool Enemy::hasLeftScreen() const
     return y >= SCREEN_BOTTOM;
 }
 
-bool Enemy::hitsBullet(double bullet_x, double bullet_y) const
+bool Enemy::hitsBullet(double bullet_x, double bullet_y, double bullet_radius) const
 {
     double dx = x - bullet_x;
     double dy = y - bullet_y;
-    double reach = radius + BULLET_RADIUS;
+    double reach = radius + bullet_radius;
     return dx * dx + dy * dy <= reach * reach;
 }
 
@@ -104,6 +108,16 @@ bool Enemy::takeHit()
 
     life -= bullet_damage;
     return life <= 0;
+}
+
+void Enemy::takeDamage(int amount)
+{
+    if (life <= 0)
+        return;
+
+    life -= amount;
+    if (life < 0)
+        life = 0;
 }
 
 void Enemy::destroy()

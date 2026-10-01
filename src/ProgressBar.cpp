@@ -12,10 +12,11 @@ static const double INNER_X2 = 44.0;
 static const double INNER_Y1 = 218.0;
 static const double INNER_Y2 = 382.0;
 
-ProgressBar::ProgressBar()
+ProgressBar::ProgressBar(double x_offset)
 {
     value = 1;
     destroyed = 0;
+    this->x_offset = x_offset;
 }
 
 void ProgressBar::setValue(int new_value)
@@ -58,13 +59,13 @@ void ProgressBar::reset()
 void ProgressBar::draw()
 {
     al_draw_filled_rectangle(
-        TRACK_X1, TRACK_Y1,
-        TRACK_X2, TRACK_Y2,
+        TRACK_X1 + x_offset, TRACK_Y1,
+        TRACK_X2 + x_offset, TRACK_Y2,
         al_map_rgb(20, 20, 20)
     );
     al_draw_rectangle(
-        TRACK_X1, TRACK_Y1,
-        TRACK_X2, TRACK_Y2,
+        TRACK_X1 + x_offset, TRACK_Y1,
+        TRACK_X2 + x_offset, TRACK_Y2,
         al_map_rgb(255, 255, 255),
         1
     );
@@ -74,13 +75,13 @@ void ProgressBar::draw()
     double fill_top = INNER_Y2 - fill_height;
 
     al_draw_filled_rectangle(
-        INNER_X1, fill_top,
-        INNER_X2, INNER_Y2,
+        INNER_X1 + x_offset, fill_top,
+        INNER_X2 + x_offset, INNER_Y2,
         al_map_rgb(80, 220, 120)
     );
 
     al_draw_filled_circle(
-        (INNER_X1 + INNER_X2) / 2.0,
+        (INNER_X1 + INNER_X2) / 2.0 + x_offset,
         fill_top,
         4,
         al_map_rgb(255, 255, 255)
@@ -91,8 +92,8 @@ void ProgressBar::draw()
     for (int i = 0; i < 4; ++i) {
         double mark_y = TRACK_Y2 - track_height * (marks[i] / 100.0);
         al_draw_filled_rectangle(
-            TRACK_X2 + 4, mark_y - 1,
-            TRACK_X2 + 12, mark_y + 1,
+            TRACK_X2 + x_offset + 4, mark_y - 1,
+            TRACK_X2 + x_offset + 12, mark_y + 1,
             al_map_rgb(255, 255, 255)
         );
     }

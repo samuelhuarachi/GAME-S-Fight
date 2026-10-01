@@ -139,8 +139,19 @@ void MiddleSector::collide(std::vector<Bullet>& bullets)
         for (Enemy& enemy : enemies) {
             if (enemy.isDestroyed())
                 continue;
-            if (!enemy.hitsBullet(bullet.getX(), bullet.getY()))
+            if (!enemy.hitsBullet(bullet.getX(), bullet.getY(), bullet.getRadius()))
                 continue;
+
+            if (bullet.isBig()) {
+                if (enemy.isTough()) {
+                    enemy.takeDamage(100);
+                    bullet.deactivate();
+                    break;
+                }
+
+                enemy.destroy();
+                continue;
+            }
 
             bullet.deactivate();
             enemy.takeHit();
@@ -172,6 +183,8 @@ void MiddleSector::damageFleet(Fleet& fleet)
                 enemy.stop();
                 if (apply)
                     enemy.pauseHurt();
+            } else {
+                enemy.resume();
             }
             continue;
         }

@@ -16,6 +16,7 @@ public:
     void draw();
     void addShip();
     void shoot(std::vector<Bullet>& bullets) const;
+    void shootBig(std::vector<Bullet>& bullets) const;
     bool collideWith(const LeftLine& line);
     bool collideWith(const Enemy& enemy);
     bool hurtOverlapping(const Enemy& enemy, bool apply_damage);

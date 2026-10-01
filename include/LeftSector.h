@@ -11,7 +11,7 @@ class Fleet;
 class LeftSector
 {
 public:
-    LeftSector();
+    LeftSector(double x1, double x2);
 
     void update(double delta_time);
     void draw();
@@ -21,6 +21,8 @@ public:
 
 private:
     std::vector<LeftLine> lines;
+    double x1;
+    double x2;
 };
 
 #endif

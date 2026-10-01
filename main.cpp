@@ -25,6 +25,7 @@
 #include "LeftSector.h"
 #include "MiddleSector.h"
 #include "ProgressBar.h"
+#include "ShotCharge.h"
 
 using namespace std;
 using std::cout;
@@ -108,9 +109,12 @@ int main()
     double delta_time;
 
     Fleet fleet(398, 590);
-    LeftSector left_sector;
+    LeftSector left_sector(243, 301);
+    LeftSector right_sector(495, 553);
     MiddleSector middle_sector;
     ProgressBar progress_bar;
+    ProgressBar bullet_bar(726);
+    ShotCharge shot_charge;
 
     vector<Bullet> bullets;
 
@@ -132,7 +136,10 @@ int main()
                         delta_time
                     );
 
+                    shot_charge.update(delta_time);
+
                     left_sector.update(delta_time);
+                    right_sector.update(delta_time);
                     middle_sector.update(delta_time, fleet);
 
                     for (Bullet& bullet : bullets) {
@@ -140,6 +147,7 @@ int main()
                     }
 
                     left_sector.damageFleet(fleet);
+                    right_sector.damageFleet(fleet);
                     middle_sector.damageFleet(fleet);
 
                     middle_sector.collide(bullets);
@@ -148,6 +156,11 @@ int main()
                     int ships = progress_bar.addDestructions(destroyed);
                     for (int i = 0; i < ships; ++i)
                         fleet.addShip();
+
+                    int right_destroyed = right_sector.collide(bullets);
+                    int upgrades = bullet_bar.addDestructions(right_destroyed);
+                    for (int i = 0; i < upgrades; ++i)
+                        Bullet::upgradeSpeed();
 
                     bullets.erase(
                         remove_if(
@@ -179,16 +192,24 @@ int main()
                     exit_game = true;
                 }
 
-                if (key[ALLEGRO_KEY_SPACE]) {
-                    if (fleet.shipCount() == 0) {
-                        fleet.reset();
-                        left_sector.reset();
-                        middle_sector.reset();
-                        progress_bar.reset();
+                if (key[ALLEGRO_KEY_R] && fleet.shipCount() == 0) {
+                    fleet.reset();
+                    left_sector.reset();
+                    right_sector.reset();
+                    middle_sector.reset();
+                    progress_bar.reset();
+                    bullet_bar.reset();
+                        Bullet::resetUpgrade();
+                        shot_charge.reset();
                         bullets.clear();
-                    } else {
+                }
+
+                if (key[ALLEGRO_KEY_SPACE] && fleet.shipCount() > 0) {
+                    if (shot_charge.isFull())
+                        fleet.shootBig(bullets);
+                    else
                         fleet.shoot(bullets);
-                    }
+                    shot_charge.empty();
                 }
 
                 key[event.keyboard.keycode] &= KEY_RELEASED;
@@ -211,9 +232,12 @@ int main()
         }
 
         left_sector.draw();
+        right_sector.draw();
         middle_sector.draw();
 
         progress_bar.draw();
+        bullet_bar.draw();
+        shot_charge.draw();
 
         al_draw_line(
             237, 0,
@@ -256,7 +280,7 @@ int main()
                 al_map_rgb(255, 255, 255),
                 400, 280,
                 ALLEGRO_ALIGN_CENTRE,
-                "press space para reiniciar o jogo"
+                "press R para reiniciar o jogo"
             );
         }
 

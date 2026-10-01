@@ -4,7 +4,7 @@
 class ProgressBar
 {
 public:
-    ProgressBar();
+    ProgressBar(double x_offset = 0);
 
     void setValue(int new_value);
     int getValue() const;
@@ -15,6 +15,7 @@ public:
 private:
     int value;
     int destroyed;
+    double x_offset;
 };
 
 #endif

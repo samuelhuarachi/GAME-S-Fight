@@ -7,14 +7,16 @@
 static const double LINE_GAP = 10.0;
 static const double LINE_SPEED = 50.0;
 
-LeftSector::LeftSector()
+LeftSector::LeftSector(double x1, double x2)
 {
+    this->x1 = x1;
+    this->x2 = x2;
 }
 
 void LeftSector::update(double delta_time)
 {
     if (lines.empty() || lines.back().getY() >= LINE_GAP)
-        lines.emplace_back(0, LINE_SPEED);
+        lines.emplace_back(0, LINE_SPEED, x1, x2);
 
     for (LeftLine& line : lines)
         line.update(delta_time);
@@ -46,6 +48,8 @@ int LeftSector::collide(std::vector<Bullet>& bullets)
 
     for (Bullet& bullet : bullets) {
         if (!bullet.isActive())
+            continue;
+        if (bullet.isBig())
             continue;
 
         for (LeftLine& line : lines) {

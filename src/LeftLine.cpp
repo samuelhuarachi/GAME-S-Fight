@@ -3,16 +3,16 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-static const double SECTOR_X1 = 243.0;
-static const double SECTOR_X2 = 301.0;
 static const double SCREEN_BOTTOM = 600.0;
 
 static int next_line_id = 1;
 
-LeftLine::LeftLine(double y, double speed)
+LeftLine::LeftLine(double y, double speed, double x1, double x2)
 {
     this->y = y;
     this->speed = speed;
+    this->x1 = x1;
+    this->x2 = x2;
     this->life = 3;
     this->id = next_line_id;
     next_line_id += 1;
@@ -45,7 +45,7 @@ bool LeftLine::hasLeftScreen() const
 bool LeftLine::hits(double bullet_x, double bullet_y) const
 {
     double radius = 4.0;
-    if (bullet_x < SECTOR_X1 - radius || bullet_x > SECTOR_X2 + radius)
+    if (bullet_x < x1 - radius || bullet_x > x2 + radius)
         return false;
 
     double dy = bullet_y - y;
@@ -57,10 +57,10 @@ bool LeftLine::hits(double bullet_x, double bullet_y) const
 bool LeftLine::hitsCircle(double cx, double cy, double radius) const
 {
     double closest_x = cx;
-    if (closest_x < SECTOR_X1)
-        closest_x = SECTOR_X1;
-    if (closest_x > SECTOR_X2)
-        closest_x = SECTOR_X2;
+    if (closest_x < x1)
+        closest_x = x1;
+    if (closest_x > x2)
+        closest_x = x2;
 
     double dx = cx - closest_x;
     double dy = cy - y;
@@ -95,8 +95,8 @@ void LeftLine::draw()
         color = al_map_rgb(255, 60, 60);
 
     al_draw_line(
-        SECTOR_X1, y,
-        SECTOR_X2, y,
+        x1, y,
+        x2, y,
         color,
         1
     );

@@ -59,6 +59,11 @@ void Fleet::shoot(std::vector<Bullet>& bullets) const
         bullets.push_back(ship.shoot());
 }
 
+void Fleet::shootBig(std::vector<Bullet>& bullets) const
+{
+    bullets.push_back(Bullet(center_x, center_y, true));
+}
+
 bool Fleet::collideWith(const LeftLine& line)
 {
     bool hit = false;

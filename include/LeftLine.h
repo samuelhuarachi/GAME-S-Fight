@@ -4,7 +4,7 @@
 class LeftLine
 {
 public:
-    LeftLine(double y, double speed);
+    LeftLine(double y, double speed, double x1, double x2);
     virtual ~LeftLine();
 
     void update(double delta_time);
@@ -22,6 +22,8 @@ public:
 private:
     double y;
     double speed;
+    double x1;
+    double x2;
     int life;
     int id;
 };
