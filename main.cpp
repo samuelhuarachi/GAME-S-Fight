@@ -22,6 +22,8 @@
 #include <vector>
 #include "Bullet.h"
 #include "Fleet.h"
+#include "LeftSector.h"
+#include "ProgressBar.h"
 
 using namespace std;
 using std::cout;
@@ -104,7 +106,9 @@ int main()
     double last_time = al_get_time();
     double delta_time;
 
-    Fleet fleet(398, 576);
+    Fleet fleet(398, 590);
+    LeftSector left_sector;
+    ProgressBar progress_bar;
 
     vector<Bullet> bullets;
 
@@ -123,6 +127,8 @@ int main()
                     is_pressing_the_key(key[ALLEGRO_KEY_D]),
                     delta_time
                 );
+
+                left_sector.update(delta_time);
 
                 for (Bullet& bullet : bullets) {
                     bullet.update(delta_time);
@@ -169,13 +175,16 @@ int main()
 
         }
 
-        al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 20, 0, "X: %f", 1.1);
 
         fleet.draw();
 
         for (Bullet& bullet : bullets) {
             bullet.draw();
         }
+
+        left_sector.draw();
+
+        progress_bar.draw();
 
         al_draw_line(
             237, 0,

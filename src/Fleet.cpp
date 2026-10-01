@@ -11,12 +11,12 @@ Fleet::Fleet(double x, double y)
     speed = 333;
     min_x = 248;
     max_x = 548;
-    //ships.emplace_back(center_x, center_y);
-    //placeShips();
-
-    for (int i = 0; i < 9; ++i)
-        ships.emplace_back(center_x, center_y);
+    ships.emplace_back(center_x, center_y);
     placeShips();
+
+    //for (int i = 0; i < 8; ++i)
+    //    ships.emplace_back(center_x, center_y);
+    //placeShips();
 }
 
 void Fleet::update(bool move_left, bool move_right, double delta_time)
