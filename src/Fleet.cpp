@@ -1,6 +1,8 @@
 #include "Fleet.h"
 
+#include <algorithm>
 #include <cmath>
+#include <cstdlib>
 
 static const double FORMATION_SPACING = 20.0;
 
@@ -11,12 +13,12 @@ Fleet::Fleet(double x, double y)
     speed = 333;
     min_x = 248;
     max_x = 548;
-    ships.emplace_back(center_x, center_y);
-    placeShips();
-
-    //for (int i = 0; i < 8; ++i)
-    //    ships.emplace_back(center_x, center_y);
+    //ships.emplace_back(center_x, center_y);
     //placeShips();
+
+    for (int i = 0; i < 3; ++i)
+        ships.emplace_back(center_x, center_y);
+    placeShips();
 }
 
 void Fleet::update(bool move_left, bool move_right, double delta_time)
@@ -44,6 +46,9 @@ void Fleet::draw()
 
 void Fleet::addShip()
 {
+    if (ships.size() >= 12)
+        return;
+
     ships.emplace_back(center_x, center_y);
     placeShips();
 }
@@ -52,6 +57,116 @@ void Fleet::shoot(std::vector<Bullet>& bullets) const
 {
     for (const Ship& ship : ships)
         bullets.push_back(ship.shoot());
+}
+
+bool Fleet::collideWith(const LeftLine& line)
+{
+    bool hit = false;
+
+    for (Ship& ship : ships) {
+        if (!ship.isAlive())
+            continue;
+        if (ship.wasHitBy(line.getId()))
+            continue;
+        if (!line.hitsCircle(ship.getX(), ship.getY(), 6))
+            continue;
+
+        ship.rememberHit(line.getId());
+        ship.takeDamage(15);
+        hit = true;
+    }
+
+    return hit;
+}
+
+bool Fleet::collideWith(const Enemy& enemy)
+{
+    bool hit = false;
+
+    for (Ship& ship : ships) {
+        if (!ship.isAlive())
+            continue;
+        if (ship.wasHitByEnemy(enemy.getId()))
+            continue;
+        if (!enemy.hitsShip(ship.getX(), ship.getY()))
+            continue;
+
+        ship.rememberEnemyHit(enemy.getId());
+        ship.takeDamage(15);
+        hit = true;
+    }
+
+    return hit;
+}
+
+bool Fleet::hurtOverlapping(const Enemy& enemy, bool apply_damage)
+{
+    bool touching = false;
+
+    for (Ship& ship : ships) {
+        if (!ship.isAlive())
+            continue;
+        if (!enemy.hitsShip(ship.getX(), ship.getY()))
+            continue;
+
+        touching = true;
+        if (apply_damage)
+            ship.takeDamage(15);
+    }
+
+    return touching;
+}
+
+void Fleet::damageRandomShip(int amount)
+{
+    std::vector<size_t> living;
+
+    for (size_t i = 0; i < ships.size(); ++i) {
+        if (ships[i].isAlive())
+            living.push_back(i);
+    }
+
+    if (living.empty())
+        return;
+
+    size_t pick = living[std::rand() % living.size()];
+    ships[pick].takeDamage(amount);
+}
+
+void Fleet::killAll()
+{
+    for (Ship& ship : ships)
+        ship.takeDamage(100);
+}
+
+void Fleet::removeDead()
+{
+    ships.erase(
+        std::remove_if(
+            ships.begin(),
+            ships.end(),
+            [](const Ship& ship) {
+                return !ship.isAlive();
+            }
+        ),
+        ships.end()
+    );
+
+    if (!ships.empty())
+        placeShips();
+}
+
+void Fleet::reset()
+{
+    ships.clear();
+    for (int i = 0; i < 3; ++i)
+        ships.emplace_back(center_x, center_y);
+    placeShips();
+}
+
+int Fleet::shipCount() const
+{
+    return (int)ships.size();
 }
 
 void Fleet::placeShips()

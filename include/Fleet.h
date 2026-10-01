@@ -1,6 +1,8 @@
 #ifndef FLEET_H
 #define FLEET_H
 
+#include "Enemy.h"
+#include "LeftLine.h"
 #include "Ship.h"
 
 #include <vector>
@@ -14,6 +16,14 @@ public:
     void draw();
     void addShip();
     void shoot(std::vector<Bullet>& bullets) const;
+    bool collideWith(const LeftLine& line);
+    bool collideWith(const Enemy& enemy);
+    bool hurtOverlapping(const Enemy& enemy, bool apply_damage);
+    void damageRandomShip(int amount);
+    void killAll();
+    void removeDead();
+    void reset();
+    int shipCount() const;
 
 private:
     struct Offset {

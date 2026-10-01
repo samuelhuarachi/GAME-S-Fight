@@ -23,6 +23,7 @@
 #include "Bullet.h"
 #include "Fleet.h"
 #include "LeftSector.h"
+#include "MiddleSector.h"
 #include "ProgressBar.h"
 
 using namespace std;
@@ -108,6 +109,7 @@ int main()
 
     Fleet fleet(398, 590);
     LeftSector left_sector;
+    MiddleSector middle_sector;
     ProgressBar progress_bar;
 
     vector<Bullet> bullets;
@@ -123,33 +125,41 @@ int main()
                 delta_time = al_get_time() - last_time;
                 last_time = al_get_time();
 
-                fleet.update(
-                    is_pressing_the_key(key[ALLEGRO_KEY_A]),
-                    is_pressing_the_key(key[ALLEGRO_KEY_D]),
-                    delta_time
-                );
+                if (fleet.shipCount() > 0) {
+                    fleet.update(
+                        is_pressing_the_key(key[ALLEGRO_KEY_A]),
+                        is_pressing_the_key(key[ALLEGRO_KEY_D]),
+                        delta_time
+                    );
 
-                left_sector.update(delta_time);
+                    left_sector.update(delta_time);
+                    middle_sector.update(delta_time, fleet);
 
-                for (Bullet& bullet : bullets) {
-                    bullet.update(delta_time);
+                    for (Bullet& bullet : bullets) {
+                        bullet.update(delta_time);
+                    }
+
+                    left_sector.damageFleet(fleet);
+                    middle_sector.damageFleet(fleet);
+
+                    middle_sector.collide(bullets);
+
+                    int destroyed = left_sector.collide(bullets);
+                    int ships = progress_bar.addDestructions(destroyed);
+                    for (int i = 0; i < ships; ++i)
+                        fleet.addShip();
+
+                    bullets.erase(
+                        remove_if(
+                            bullets.begin(),
+                            bullets.end(),
+                            [](const Bullet& bullet) {
+                                return !bullet.isActive();
+                            }
+                        ),
+                        bullets.end()
+                    );
                 }
-
-                int destroyed = left_sector.collide(bullets);
-                int ships = progress_bar.addDestructions(destroyed);
-                for (int i = 0; i < ships; ++i)
-                    fleet.addShip();
-
-                bullets.erase(
-                    remove_if(
-                        bullets.begin(),
-                        bullets.end(),
-                        [](const Bullet& bullet) {
-                            return !bullet.isActive();
-                        }
-                    ),
-                    bullets.end()
-                );
 
 
                 for(int i = 0; i < ALLEGRO_KEY_MAX; i++) {
@@ -169,8 +179,17 @@ int main()
                     exit_game = true;
                 }
 
-                if (key[ALLEGRO_KEY_SPACE])
-                    fleet.shoot(bullets);
+                if (key[ALLEGRO_KEY_SPACE]) {
+                    if (fleet.shipCount() == 0) {
+                        fleet.reset();
+                        left_sector.reset();
+                        middle_sector.reset();
+                        progress_bar.reset();
+                        bullets.clear();
+                    } else {
+                        fleet.shoot(bullets);
+                    }
+                }
 
                 key[event.keyboard.keycode] &= KEY_RELEASED;
                 break;
@@ -192,6 +211,7 @@ int main()
         }
 
         left_sector.draw();
+        middle_sector.draw();
 
         progress_bar.draw();
 
@@ -222,6 +242,23 @@ int main()
             al_map_rgb(255, 255, 255),
             2
         );
+
+        if (fleet.shipCount() == 0) {
+            al_draw_text(
+                font,
+                al_map_rgb(255, 255, 255),
+                400, 260,
+                ALLEGRO_ALIGN_CENTRE,
+                "GAME OVER"
+            );
+            al_draw_text(
+                font,
+                al_map_rgb(255, 255, 255),
+                400, 280,
+                ALLEGRO_ALIGN_CENTRE,
+                "press space para reiniciar o jogo"
+            );
+        }
 
 
 

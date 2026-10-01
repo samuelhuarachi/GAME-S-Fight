@@ -49,6 +49,12 @@ int ProgressBar::addDestructions(int count)
     return ships;
 }
 
+void ProgressBar::reset()
+{
+    value = 1;
+    destroyed = 0;
+}
+
 void ProgressBar::draw()
 {
     al_draw_filled_rectangle(

@@ -1,5 +1,7 @@
 #include "LeftSector.h"
 
+#include "Fleet.h"
+
 #include <algorithm>
 
 static const double LINE_GAP = 10.0;
@@ -31,8 +33,11 @@ void LeftSector::update(double delta_time)
 
 void LeftSector::draw()
 {
-    for (LeftLine& line : lines)
+    for (LeftLine& line : lines) {
+        if (line.isDestroyed())
+            continue;
         line.draw();
+    }
 }
 
 int LeftSector::collide(std::vector<Bullet>& bullets)
@@ -68,4 +73,39 @@ int LeftSector::collide(std::vector<Bullet>& bullets)
     );
 
     return destroyed;
+}
+
+void LeftSector::damageFleet(Fleet& fleet)
+{
+    for (size_t i = 0; i < lines.size(); ++i) {
+        if (lines[i].isDestroyed())
+            continue;
+        if (!fleet.collideWith(lines[i]))
+            continue;
+
+        int last = (int)i + 6;
+        if (last >= (int)lines.size())
+            last = (int)lines.size() - 1;
+
+        for (int j = (int)i; j <= last; ++j)
+            lines[j].destroy();
+    }
+
+    lines.erase(
+        std::remove_if(
+            lines.begin(),
+            lines.end(),
+            [](const LeftLine& line) {
+                return line.isDestroyed();
+            }
+        ),
+        lines.end()
+    );
+
+    fleet.removeDead();
+}
+
+void LeftSector::reset()
+{
+    lines.clear();
 }

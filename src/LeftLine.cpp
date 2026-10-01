@@ -7,11 +7,15 @@ static const double SECTOR_X1 = 243.0;
 static const double SECTOR_X2 = 301.0;
 static const double SCREEN_BOTTOM = 600.0;
 
+static int next_line_id = 1;
+
 LeftLine::LeftLine(double y, double speed)
 {
     this->y = y;
     this->speed = speed;
     this->life = 3;
+    this->id = next_line_id;
+    next_line_id += 1;
 }
 
 LeftLine::~LeftLine()
@@ -26,6 +30,11 @@ void LeftLine::update(double delta_time)
 double LeftLine::getY() const
 {
     return y;
+}
+
+int LeftLine::getId() const
+{
+    return id;
 }
 
 bool LeftLine::hasLeftScreen() const
@@ -45,6 +54,19 @@ bool LeftLine::hits(double bullet_x, double bullet_y) const
     return dy <= radius;
 }
 
+bool LeftLine::hitsCircle(double cx, double cy, double radius) const
+{
+    double closest_x = cx;
+    if (closest_x < SECTOR_X1)
+        closest_x = SECTOR_X1;
+    if (closest_x > SECTOR_X2)
+        closest_x = SECTOR_X2;
+
+    double dx = cx - closest_x;
+    double dy = cy - y;
+    return dx * dx + dy * dy <= radius * radius;
+}
+
 bool LeftLine::takeHit()
 {
     if (life <= 0)
@@ -52,6 +74,11 @@ bool LeftLine::takeHit()
 
     life -= 1;
     return life <= 0;
+}
+
+void LeftLine::destroy()
+{
+    life = 0;
 }
 
 bool LeftLine::isDestroyed() const

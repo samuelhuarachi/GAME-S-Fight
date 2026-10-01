@@ -6,6 +6,8 @@
 
 #include <vector>
 
+class Fleet;
+
 class LeftSector
 {
 public:
@@ -14,6 +16,8 @@ public:
     void update(double delta_time);
     void draw();
     int collide(std::vector<Bullet>& bullets);
+    void damageFleet(Fleet& fleet);
+    void reset();
 
 private:
     std::vector<LeftLine> lines;

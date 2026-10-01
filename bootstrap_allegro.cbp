@@ -48,6 +48,7 @@
 		<Unit filename="src/Fleet.cpp" />
 		<Unit filename="src/LeftLine.cpp" />
 		<Unit filename="src/LeftSector.cpp" />
+		<Unit filename="src/ProgressBar.cpp" />
 		<Unit filename="src/Ship.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
