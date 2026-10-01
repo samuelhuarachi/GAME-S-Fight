@@ -52,6 +52,7 @@
 		<Unit filename="src/MiddleSector.cpp" />
 		<Unit filename="src/ProgressBar.cpp" />
 		<Unit filename="src/Ship.cpp" />
+		<Unit filename="src/ShotCharge.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
