@@ -3,7 +3,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-static const double FILL_TIME = 1.0;
+static const double FILL_TIME = 0.8;
 static const double BAR_X1 = 340.0;
 static const double BAR_X2 = 460.0;
 static const double BAR_Y1 = 16.0;
@@ -38,6 +38,12 @@ void ShotCharge::reset()
 bool ShotCharge::isFull() const
 {
     return value >= 100;
+}
+
+int ShotCharge::spreadDegrees() const
+{
+    int closed = (int)(value * 14.0 / 100.0);
+    return 15 - closed;
 }
 
 void ShotCharge::draw()

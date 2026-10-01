@@ -69,7 +69,7 @@ int main()
 
     ALLEGRO_FONT* font;
 
-    //al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+    al_set_new_display_flags(ALLEGRO_FULLSCREEN);
     display = al_create_display(800,600);
     if(!display)
         al_show_native_message_box(NULL,NULL,NULL,"Couldnt create Screen",NULL,NULL);
@@ -109,7 +109,7 @@ int main()
     double delta_time;
 
     Fleet fleet(398, 590);
-    LeftSector left_sector(243, 301);
+    LeftSector left_sector(243, 301, 100);
     LeftSector right_sector(495, 553);
     MiddleSector middle_sector;
     ProgressBar progress_bar;
@@ -205,6 +205,7 @@ int main()
                 }
 
                 if (key[ALLEGRO_KEY_SPACE] && fleet.shipCount() > 0) {
+                    Bullet::setSpread(shot_charge.spreadDegrees());
                     if (shot_charge.isFull())
                         fleet.shootBig(bullets);
                     else

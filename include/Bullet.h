@@ -18,6 +18,7 @@ public:
     bool isBig() const;
     static void upgradeSpeed();
     static void resetUpgrade();
+    static void setSpread(int degrees);
 
 private:
     double x;

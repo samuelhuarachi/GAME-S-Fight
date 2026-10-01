@@ -21,6 +21,7 @@ public:
     bool hitsShip(double ship_x, double ship_y) const;
     bool takeHit();
     void takeDamage(int amount);
+    void boostSpeed(double extra);
     void destroy();
     bool isDestroyed() const;
     bool isTough() const;
@@ -34,6 +35,7 @@ private:
     double radius;
     double hurt_cooldown;
     int life;
+    int max_life;
     int bullet_damage;
     int id;
     bool stopped;

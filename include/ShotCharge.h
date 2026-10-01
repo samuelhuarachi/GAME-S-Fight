@@ -11,6 +11,7 @@ public:
     void reset();
     void draw();
     bool isFull() const;
+    int spreadDegrees() const;
 
 private:
     double value;

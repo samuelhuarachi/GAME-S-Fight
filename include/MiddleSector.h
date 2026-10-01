@@ -23,10 +23,12 @@ private:
     void spawnRow();
     void spawnTough();
     void rollToughWait();
+    void speedUpHorde();
 
     std::vector<Enemy> enemies;
     double tough_timer;
     double tough_wait;
+    double horde_bonus;
 };
 
 #endif

@@ -9,6 +9,7 @@
 static const double PI = 3.14159265358979323846;
 static const double BIG_RADIUS = 12.0;
 static int speed_bonus = 0;
+static int spread_degrees = 15;
 
 static double rollSpeed()
 {
@@ -18,7 +19,10 @@ static double rollSpeed()
         seeded = true;
     }
 
-    return 800.0 + speed_bonus + (std::rand() % 401);
+    double speed = 800.0 + speed_bonus + (std::rand() % 401);
+    if (speed > 2000.0)
+        speed = 2000.0;
+    return speed;
 }
 
 Bullet::Bullet(double x, double y)
@@ -27,7 +31,8 @@ Bullet::Bullet(double x, double y)
     this->y = y;
 
     double speed = rollSpeed();
-    double degrees = (std::rand() % 5) - 2;
+    int span = spread_degrees * 2 + 1;
+    double degrees = (std::rand() % span) - spread_degrees;
     double radians = degrees * PI / 180.0;
     this->velocity_x = std::sin(radians) * speed;
     this->velocity_y = -std::cos(radians) * speed;
@@ -57,9 +62,8 @@ void Bullet::update(double delta_time)
     x += velocity_x * delta_time;
     y += velocity_y * delta_time;
 
-    if (y < 0) {
+    if (y < 0 || x - radius < 237 || x + radius > 559)
         active = false;
-    }
 }
 
 void Bullet::draw()
@@ -113,4 +117,11 @@ void Bullet::upgradeSpeed()
 void Bullet::resetUpgrade()
 {
     speed_bonus = 0;
+}
+
+void Bullet::setSpread(int degrees)
+{
+    if (degrees < 1)
+        degrees = 1;
+    spread_degrees = degrees;
 }

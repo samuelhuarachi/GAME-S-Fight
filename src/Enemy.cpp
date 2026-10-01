@@ -1,7 +1,9 @@
 #include "Enemy.h"
 
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
+#include <cstdio>
 
 static const double SHIP_RADIUS = 6.0;
 static const double SCREEN_BOTTOM = 600.0;
@@ -17,6 +19,7 @@ Enemy::Enemy(double x, double y, double speed, double radius, int bullet_damage,
     this->radius = radius;
     this->hurt_cooldown = 0;
     this->life = life;
+    this->max_life = life;
     this->bullet_damage = bullet_damage;
     this->id = next_enemy_id;
     this->stopped = false;
@@ -37,12 +40,39 @@ void Enemy::update(double delta_time)
 void Enemy::draw()
 {
     ALLEGRO_COLOR color = al_map_rgb(160, 60, 200);
-    if (isTough())
-        color = al_map_rgb(220, 40, 40);
-    if (life <= 50)
-        color = al_map_rgb(255, 220, 0);
+
+    if (isTough()) {
+        double remaining = 0;
+        if (max_life > 0)
+            remaining = (double)life / (double)max_life;
+
+        color = al_map_rgb(255, 255, 255);
+        if (remaining > 0.20)
+            color = al_map_rgb(255, 255, 140);
+        if (remaining > 0.40)
+            color = al_map_rgb(255, 220, 0);
+        if (remaining > 0.60)
+            color = al_map_rgb(255, 140, 0);
+        if (remaining > 0.80)
+            color = al_map_rgb(220, 40, 40);
+    }
 
     al_draw_filled_circle(x, y, radius, color);
+
+    if (!isTough())
+        return;
+
+    static ALLEGRO_FONT* font = al_create_builtin_font();
+    char label[16];
+    std::snprintf(label, sizeof(label), "%d", life);
+    al_draw_text(
+        font,
+        al_map_rgb(255, 255, 255),
+        x,
+        y - radius - 10,
+        ALLEGRO_ALIGN_CENTRE,
+        label
+    );
 }
 
 void Enemy::stop()
@@ -118,6 +148,11 @@ void Enemy::takeDamage(int amount)
     life -= amount;
     if (life < 0)
         life = 0;
+}
+
+void Enemy::boostSpeed(double extra)
+{
+    speed += extra;
 }
 
 void Enemy::destroy()

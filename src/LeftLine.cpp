@@ -42,9 +42,8 @@ bool LeftLine::hasLeftScreen() const
     return y >= SCREEN_BOTTOM;
 }
 
-bool LeftLine::hits(double bullet_x, double bullet_y) const
+bool LeftLine::hits(double bullet_x, double bullet_y, double radius) const
 {
-    double radius = 4.0;
     if (bullet_x < x1 - radius || bullet_x > x2 + radius)
         return false;
 

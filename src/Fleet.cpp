@@ -46,7 +46,7 @@ void Fleet::draw()
 
 void Fleet::addShip()
 {
-    if (ships.size() >= 12)
+    if (ships.size() >= 50)
         return;
 
     ships.emplace_back(center_x, center_y);

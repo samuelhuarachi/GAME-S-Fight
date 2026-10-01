@@ -6,6 +6,7 @@
 #include <cstdlib>
 
 static const double ENEMY_SPEED = 40.0;
+static const double HORDE_SPEED_STEP = 10.0;
 static const double PACK_CLEAR = 12.0;
 static const double PACK_X1 = 314.0;
 static const double PACK_X2 = 482.0;
@@ -34,12 +35,13 @@ static bool tooClose(const std::vector<Enemy>& enemies, double x, double y, doub
 MiddleSector::MiddleSector()
 {
     tough_timer = 0;
+    horde_bonus = 0;
     rollToughWait();
 }
 
 void MiddleSector::rollToughWait()
 {
-    tough_wait = 20.0 + (std::rand() % 11);
+    tough_wait = 10.0 + (std::rand() % 6);
 }
 
 void MiddleSector::spawnRow()
@@ -53,7 +55,7 @@ void MiddleSector::spawnRow()
             if (tooClose(enemies, x, y, SMALL_RADIUS))
                 continue;
 
-            enemies.emplace_back(x, y, ENEMY_SPEED);
+            enemies.emplace_back(x, y, ENEMY_SPEED + horde_bonus);
             break;
         }
     }
@@ -73,6 +75,17 @@ void MiddleSector::spawnTough()
         tough_timer = 0;
         rollToughWait();
         return;
+    }
+}
+
+void MiddleSector::speedUpHorde()
+{
+    horde_bonus += HORDE_SPEED_STEP;
+
+    for (Enemy& enemy : enemies) {
+        if (enemy.isTough() || enemy.isDestroyed())
+            continue;
+        enemy.boostSpeed(HORDE_SPEED_STEP);
     }
 }
 
@@ -145,6 +158,8 @@ void MiddleSector::collide(std::vector<Bullet>& bullets)
             if (bullet.isBig()) {
                 if (enemy.isTough()) {
                     enemy.takeDamage(100);
+                    if (enemy.isDestroyed())
+                        speedUpHorde();
                     bullet.deactivate();
                     break;
                 }
@@ -155,6 +170,8 @@ void MiddleSector::collide(std::vector<Bullet>& bullets)
 
             bullet.deactivate();
             enemy.takeHit();
+            if (enemy.isTough() && enemy.isDestroyed())
+                speedUpHorde();
             break;
         }
     }
@@ -213,5 +230,6 @@ void MiddleSector::reset()
 {
     enemies.clear();
     tough_timer = 0;
+    horde_bonus = 0;
     rollToughWait();
 }
